@@ -1,0 +1,71 @@
+SUMMARY:
+=======
+  Saves hash values to the file system.
+
+LONGER DESCRIPTION:
+==================
+
+  Say, you've got a hash like {:a => 1}
+
+  Using this gem, you'll be able to do this:
+
+{:a => 1}.save
+
+  It will create a file in ./data/<key>.
+
+  The contents of the file will be <value>.
+
+  In the above example, you'll have
+
+./data/a
+
+  whose contents when reloaded
+
+Hash.find(:a)
+=> 1
+
+
+USAGE:
+=====
+require 'hash-save'
+
+* CREATE
+
+{:david => "pizza"}.save
+
+* READ
+
+Hash.find(:david)
+=> "pizza"
+
+* UPDATE by overwriting.
+
+{:david => "burgers}.save
+
+  OR
+
+Hash.modify(:david){|s| s + " and fries"}
+# "burgers and fries"
+
+  OR
+
+x = Hash.find(:david)
+=> {:david => "pizza"}
+
+x[:david] = "burgers"
+=> {:david => "burgers"}
+
+x.save
+# ./data/david is overwritten with the new value.
+
+
+* INCREMENT
+
+{:id => 1}.save
+
+Hash.inc(:id)
+=> 2
+
+License
+=======
+# MIT License.  Enjoy.  :)
