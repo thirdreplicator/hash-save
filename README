@@ -2,6 +2,23 @@ SUMMARY:
 =======
   Saves hash values to the file system.
 
+WHY?:
+====
+
+  I was prototyping something and needed to simulate a database in a
+simple way and couldn't find anything that I liked.  I wanted to just
+say:
+
+{:a => 1}.save
+
+and then recall it later:
+
+Hash.find(:a)
+=> 1
+
+  Super simple.  No frills.  Consider this to be the stone hand-axe of
+persistence.
+
 LONGER DESCRIPTION:
 ==================
 
@@ -44,7 +61,7 @@ Hash.find(:david)
 
   OR
 
-Hash.modify(:david){|s| s + " and fries"}
+Hash.modify!(:david){|s| s + " and fries"}
 # "burgers and fries"
 
   OR
@@ -63,8 +80,9 @@ x.save
 
 {:id => 1}.save
 
-Hash.inc(:id)
-=> 2
+Hash.inc!(:id)
+=> {:id => 2}
+
 
 License
 =======
