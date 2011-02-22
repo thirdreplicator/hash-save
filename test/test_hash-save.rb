@@ -65,11 +65,11 @@ describe Hash do
   end
 
   it "should be able to save data in a separate namespace" do
-    {:x => 1, :y => 2}.save
+    #{:x => 1, :y => 2}.save
+    #abc = Hash.load
+    #abc[:x].should == 1
     {:x => 100, :y => 200}.save_as("xyz")
     xyz = Hash.load_from("xyz")
-    abc = Hash.load
-    abc[:x].should == 1
     xyz[:x].should == 100
   end    
 end

@@ -1,49 +1,64 @@
+require 'fileutils'
+
 class Hash
   BASE_DIR = './data'
 
-  def save
+  def save_as(namespace)
+    save("#{BASE_DIR}/#{namespace}")
+  end
+
+  def self.load_from(namespace)
+    files = Dir.entries("#{BASE_DIR}/#{namespace}")[2..-1]
+    h = {}
+    files.each do |fn|
+      h[fn.to_sym] = find(fn, "#{BASE_DIR}/#{namespace}")
+    end
+    h
+  end
+
+  def save(base_dir=BASE_DIR)
     self.each do |k,v|
-      File.open("#{BASE_DIR}/#{k}", 'wb') do |f|
+      File.open("#{base_dir}/#{k}", 'wb') do |f|
         Marshal.dump(v, f)
       end
     end
 
     rescue Errno::ENOENT
-      Dir.mkdir(BASE_DIR)
-      retry if Dir.exists?(BASE_DIR)
+      FileUtils.mkdir_p(base_dir)
+      retry if Dir.exists?(base_dir)
   end
 
-  def load!
+  def load!(base_dir=BASE_DIR)
     self.each do |k,v|
-      self[k] = self.class.find!(k)
+      self[k] = self.class.find!(k, base_dir)
     end
   end
 
-  def self.find!(k)
-    File.open("#{BASE_DIR}/#{k}", 'rb') do |f|
+  def self.find!(k, base_dir=BASE_DIR)
+    File.open("#{base_dir}/#{k}", 'rb') do |f|
       Marshal.load(f)
     end
   end
 
-  def load
+  def load(base_dir=BASE_DIR)
     self.each do |k,v|
-      self[k] = self.class.find(k)
+      self[k] = self.class.find(k, base_dir)
     end
   end
 
-  def self.find(k, default_val=nil)
+  def self.find(k, base_dir=BASE_DIR, default_val=nil)
     begin
-      self.find!(k)
+      self.find!(k, base_dir)
     rescue Errno::ENOENT => e
       default_val
     end
   end
 
-  def self.modify!(k)
-    {k => yield(Hash.find(k))}.save
+  def self.modify!(k, base_dir=BASE_DIR)
+    {k => yield(Hash.find(k, base_dir))}.save
   end
 
-  def self.inc!(k)
-    modify!(k){ |x| x + 1 }
+  def self.inc!(k, base_dir=BASE_DIR)
+    modify!(k, base_dir){ |x| x + 1 }
   end
 end
