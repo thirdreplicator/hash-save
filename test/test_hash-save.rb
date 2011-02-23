@@ -79,4 +79,9 @@ describe Hash do
     xyz[:x].should == 100
   end
 
+  it "should be able to load an individual value rather than an entire directory" do
+    {:x => 100, :y => 200}.save_in("xyz")
+    xyz = {:x => nil}.load_from("xyz")
+    xyz[:x].should == 100
+  end
 end

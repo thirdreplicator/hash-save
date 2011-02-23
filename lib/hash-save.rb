@@ -9,6 +9,10 @@ class Hash
 
   alias :save_in :save_as
 
+  def load_from(namespace)
+    load("#{BASE_DIR}/#{namespace}") 
+  end
+
   def self.load_from(namespace)
     files = Dir.entries("#{BASE_DIR}/#{namespace}")[2..-1]
     h = {}
