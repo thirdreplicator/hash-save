@@ -23,21 +23,26 @@ class Hash
   end
 
   def save(base_dir=BASE_DIR)
-    self.each do |k,v|
-      File.open("#{base_dir}/#{k}", 'wb') do |f|
-        Marshal.dump(v, f)
+    retry_count = 0
+    begin
+
+      self.each do |k,v|
+        File.open("#{base_dir}/#{k}", 'wb') do |f|
+          Marshal.dump(v, f)
+        end
       end
-    end
 
     rescue Errno::ENOENT => e
+      retry_count += 1
       before = Dir.exists?(base_dir)
       FileUtils.mkdir_p(base_dir)
       after = Dir.exists?(base_dir)
-      if before == false && after == true
+      if before == false && after == true && retry_count < 2
         retry 
       else
         raise e
       end
+    end
   end
 
   def load!(base_dir=BASE_DIR)
