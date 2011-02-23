@@ -29,9 +29,15 @@ class Hash
       end
     end
 
-    rescue Errno::ENOENT
+    rescue Errno::ENOENT => e
+      before = Dir.exists?(base_dir)
       FileUtils.mkdir_p(base_dir)
-      retry if Dir.exists?(base_dir)
+      after = Dir.exists?(base_dir)
+      if before == false && after == true
+        retry 
+      else
+        raise e
+      end
   end
 
   def load!(base_dir=BASE_DIR)
